@@ -25,8 +25,11 @@ def parse_puml_file(file_path):
 
             # Collect column definitions
             elif current_table and ":" in line:
-                column = line.split(":")[0].strip()
-                table_columns[current_table].append(column)
+                parts = line.split(":")
+                if len(parts) == 2:
+                    column_name = parts[0].strip()
+                    column_type = parts[1].strip()
+                    table_columns[current_table].append((column_name, column_type))
 
             # Parse relationships
             elif "-->" in line:
@@ -88,7 +91,10 @@ def export_subgraph_to_puml(subgraph, table_columns, output_file, include_column
             if include_columns:
                 f.write(f"class {node}{style} {{\n")
                 for col in table_columns.get(node, []):
-                    f.write(f"  {col} : unknown\n")
+                    if isinstance(col, tuple) and len(col) == 2:
+                        f.write(f"  {col[0]} : {col[1]}\n")
+                    else:
+                        f.write(f"  {col} : unknown\n")  # fallback if data is malformed
                 f.write("}\n\n")
             else:
                 f.write(f"class {node}{style}\n")
