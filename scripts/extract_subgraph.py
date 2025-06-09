@@ -64,25 +64,7 @@ def extract_subgraph(graph, table1, table2=None):
         return None
 
 
-# def export_subgraph_to_puml(subgraph, table_columns, output_file="subgraph.puml"):
-#     """
-#     Export the subgraph to a .puml format
-#     """
-#     with open(output_file, 'w') as f:
-#         f.write("@startuml\n\n")
-#         for node in subgraph.nodes:
-#             f.write(f"class {node} {{\n")
-#             for col in table_columns.get(node, []):
-#                 f.write(f"  {col} : unknown\n")
-#             f.write("}\n\n")
-#
-#         for src, dst in subgraph.edges:
-#             f.write(f"{src} --> {dst}\n")
-#
-#         f.write("\n@enduml\n")
-#     print(f"Subgraph written to {output_file}")
-
-def export_subgraph_to_puml(subgraph, table_columns, output_file="subgraph.puml", include_columns=True, highlight_tables=None):
+def export_subgraph_to_puml(subgraph, table_columns, output_file, include_columns=True, highlight_tables=None):
     """
     Export the subgraph to a .puml format with optional column display and highlighted tables.
     """
@@ -128,13 +110,15 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    graph, table_columns = parse_puml_file(args.puml)
+    base_path = "tmp"
+    graph, table_columns = parse_puml_file(f"{base_path}/{args.puml}")
     subgraph = extract_subgraph(graph, args.table1, args.table2)
 
     if subgraph:
         export_subgraph_to_puml(
             subgraph,
             table_columns,
+            output_file=f"{base_path}/subgraph.puml",
             include_columns=not args.no_columns,
             highlight_tables=[args.table1] + ([args.table2] if args.table2 else [])
         )

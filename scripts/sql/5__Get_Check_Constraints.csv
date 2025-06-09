@@ -1,0 +1,26 @@
+TABLE_SCHEMA,TABLE_NAME,CONSTRAINT_NAME,CHECK_CLAUSE
+dbo,Contracts,CK_Contracts_CONFLICTING,"([dbo].[DoesConflictingContractExist]([Id],[Name],[CreateTime],[ValidUntil])=(0))"
+dbo,EnvBillingOperations,CK_EnvBillingOperations_CONFLICTING,"([dbo].[DoesConflictingEboExist]([Id],[EntAppEnvId],[EffectiveFrom],[EffectiveUntil])=(0))"
+dbo,EnvBillingOperations,CK_EnvBillingOperations_EffectiveWindow,([EffectiveFrom]<[EffectiveUntil])
+dbo,EnvironmentPolicies,CK_EnvironmentPolicies_CONFLICTING_EXTERNALID,"([dbo].[DoesConflictingEPExternalIdExist]([Id],[ExternalId],[CreateTime],[ValidUntil])=(0))"
+dbo,EnvOperationAudits,CK_EnvOperationAudits_NullWSA,([WebSessionAuditId] IS NOT NULL OR [OriginatorInt]<>(0))
+dbo,EnvRuns,CK_EnvRuns_CONFLICTING,"([dbo].[DoesConflictingEnvRunExist]([Id],[EnvId],[StartTime],[EndTime])=(0))"
+dbo,Envs,CK_Envs_INHERIT,([EnvTypeInt]=(0) AND [UserProjectId] IS NOT NULL OR [EnvTypeInt]=(1) AND [OwnerId] IS NOT NULL)
+dbo,EnvTemplates,CK_EnvTemplates_CONFLICTING,"([dbo].[DoesConflictingEnvTemplateExist]([Id],[EntAppPrototypeId],[CreateTime],[ValidUntil])=(0))"
+dbo,EnvUserRoles,CK_EnvUserRoles_CONFLICTING,"([dbo].[DoesConflictingEnvUserRoleExist]([Id],[EnvId],[UserId],[CreateTime],[ValidUntil])=(0))"
+dbo,FastUploadFolders,CK_FastUploadFolders_CONFLICTING,"([dbo].[DoesConflictingFastUploadFolderExist]([Id],[UserId],[ParentName],[FolderName],[CreateTime],[ValidUntil])=(0))"
+dbo,MachineDomains,CK_MachineDomains_Controller_Uniqueness,"([IsDeleted]=(1) OR [dbo].[DoesConflictingMachineDomainExist]([Id],[DomainControllerId])=(0))"
+dbo,MachineUsers,CK_MachineUsers_Username_Uniqueness,"([IsDeleted]=(1) OR [dbo].[DoesConflictingMachineUserExist]([Id],[Username],[MachineId],[DomainId])=(0))"
+dbo,MachineVanityNames,CK_MachineVanityNames_CONFLICTING,"([dbo].[DoesConflictingMachineVanityNameExist]([Id],[VanityName],[CreateTime],[ValidUntil])=(0))"
+dbo,NetAdapters,CK_NetAdapters_EthNum_Uniqueness,"([IsDeleted]=(1) OR [dbo].[DoesConflictingNetAdapterExist]([Id],[EthNum],[BackendMachineId])=(0))"
+dbo,Networks,CK_Networks_Uniqueness,"([IsDeleted]=(1) OR [dbo].[DoesConflictingNetworkExist]([Id],[Config_NetworkName],[NetworkNumber],[BackendMachineGroupId])=(0))"
+dbo,ProjectPrototypes,CK_ProjectPrototypes_CONFLICTING,"([dbo].[DoesConflictingProjectPrototypeExist]([Id],[ProjectId],[PrototypeId],[CreateTime],[ValidUntil])=(0))"
+dbo,Projects,CK_Projects_CONFLICTING,"([dbo].[DoesConflictingProjectExist]([Id],[UniqueToken],[CreateTime],[ValidUntil])=(0))"
+dbo,Prototypes,CK_Prototypes_INHERIT,([TypeInt]=(0) AND [OwnerId] IS NULL AND [IsPublic] IS NULL OR [TypeInt]=(1) AND [OwnerId] IS NOT NULL AND [IsPublic] IS NOT NULL)
+dbo,Prototypes,CK_Prototypes_CONFLICTING,"([dbo].[DoesConflictingPrototypeExist]([Id],[UniqueToken],[CreateTime],[ValidUntil])=(0))"
+dbo,Templates,CK_Templates_CONFLICTING,"([dbo].[DoesConflictingTemplateExist]([Id],[Name],[LifecycleStatusInt])=(0))"
+dbo,UsersProjects,CK_UsersProjects_EP_Project,([EnvironmentPolicyId] IS NULL OR [dbo].[GetEnvironmentPolicyProjectId]([EnvironmentPolicyId])=[ProjectId])
+dbo,UsersProjects,CK_UsersProjects_CONFLICTING,"([dbo].[DoesConflictingUPExist]([Id],[UserId],[ProjectId],[UserLevelInt],[EnvironmentPolicyId],[ProjectPrototypeId],[VendorId],[OwningSEId],getdate(),[ValidUntil])=(0))"
+dbo,UsersProjects,CK_UsersProjects_INHERIT,([UserLevelInt]>(1) AND [OwningSEId] IS NULL AND [EnvironmentPolicyId] IS NULL AND [EndOfEvalEmailSent] IS NULL OR [UserLevelInt]=(1) AND [OwningSEId] IS NOT NULL AND [EnvironmentPolicyId] IS NOT NULL AND [EndOfEvalEmailSent] IS NOT NULL)
+dbo,UsersProjectsDefaultTeams,CK_UsersProjectsDefaultTeams_CONFLICTING,"([dbo].[DoesConflictingUserProjectDefaultTeamExist]([Id],[UserId],[ProjectId],[CreateTime],[ValidUntil])=(0))"
+dbo,WorkerCommands,CK_WorkerCommands_DependsOnTransactionId,([dbo].[DoesWorkerCommandTransactionIdExists]([DependsOnTransactionId])=(1))

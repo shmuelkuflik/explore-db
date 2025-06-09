@@ -3,19 +3,19 @@ from collections import defaultdict
 import os
 
 
-def generate_complete_plantuml_diagram(base_path="/Users/shmuel.kuflik/Downloads"):
+def generate_complete_plantuml_diagram(base_input_path):
     """
     Generate complete PlantUML class diagram from all CSV files
     """
 
     # File paths
     files = {
-        'columns': f"{base_path}/1__Get_all_tables_anlumns_with_basic_info.csv",
-        'primary_keys': f"{base_path}/2__Get_Primary_Keys.csv",
-        'foreign_keys': f"{base_path}/3__Get_Foreign_Keys_with_relationships.csv",
-        'unique_constraints': f"{base_path}/4__Get_Unique_Constraints.csv",
-        'check_constraints': f"{base_path}/5__Get_Check_Constraints.csv",
-        'indexes': f"{base_path}/6__Get_Indexes__for_ing_of_relationships.csv"
+        'columns': f"{base_input_path}/1__Get_all_tables_anlumns_with_basic_info.csv",
+        'primary_keys': f"{base_input_path}/2__Get_Primary_Keys.csv",
+        'foreign_keys': f"{base_input_path}/3__Get_Foreign_Keys_with_relationships.csv",
+        'unique_constraints': f"{base_input_path}/4__Get_Unique_Constraints.csv",
+        'check_constraints': f"{base_input_path}/5__Get_Check_Constraints.csv",
+        'indexes': f"{base_input_path}/6__Get_Indexes__for_ing_of_relationships.csv"
     }
 
     # Check if files exist
@@ -41,7 +41,7 @@ def generate_complete_plantuml_diagram(base_path="/Users/shmuel.kuflik/Downloads
         plantuml_content = generate_complete_plantuml(tables_info, df_fk)
 
         # Save to file
-        output_file = f"database_diagram.puml"
+        output_file = f"{base_output_path}/database_diagram.puml"
         with open(output_file, 'w') as f:
             f.write(plantuml_content)
 
@@ -194,13 +194,13 @@ def generate_complete_plantuml(tables_info, df_fk):
     return "\n".join(lines)
 
 
-def generate_simple_version(base_path="/Users/shmuel.kuflik/Downloads"):
+def generate_simple_version(base_input_path, base_output_path):
     """Generate a simpler version with just tables and basic relationships"""
 
     try:
         # Read main files
-        df_columns = pd.read_csv(f"{base_path}/1__Get_all_tables_anlumns_with_basic_info.csv")
-        df_fk = pd.read_csv(f"{base_path}/3__Get_Foreign_Keys_with_relationships.csv")
+        df_columns = pd.read_csv(f"{base_input_path}/1__Get_all_tables_anlumns_with_basic_info.csv")
+        df_fk = pd.read_csv(f"{base_input_path}/3__Get_Foreign_Keys_with_relationships.csv")
 
         # Simple table structure
         tables = defaultdict(list)
@@ -227,7 +227,7 @@ def generate_simple_version(base_path="/Users/shmuel.kuflik/Downloads"):
         lines.append("@enduml")
 
         # Save simple version
-        simple_output = f"database_diagram_simple.puml"
+        simple_output = f"{base_output_path}/database_diagram_simple.puml"
         with open(simple_output, 'w') as f:
             f.write("\n".join(lines))
 
@@ -240,18 +240,27 @@ def generate_simple_version(base_path="/Users/shmuel.kuflik/Downloads"):
 # Main execution
 if __name__ == "__main__":
     print("Generating complete PlantUML database diagram...")
+    base_input_path = "scripts/sql"
+    base_output_path = "tmp"
+    if not os.path.exists(base_output_path):
+        os.makedirs(base_output_path)
+    if os.path.exists(f"{base_output_path}/database_diagram.puml"):
+        os.remove(f"{base_output_path}/database_diagram.puml")
+    if os.path.exists(f"{base_output_path}/database_diagram_simple.puml"):
+        os.remove(f"{base_output_path}/database_diagram_simple.puml")
 
     # Generate complete version
-    result = generate_complete_plantuml_diagram()
+    result = generate_complete_plantuml_diagram(base_input_path)
 
     # Also generate a simple version
     print("\nGenerating simple version...")
-    generate_simple_version()
+
+    generate_simple_version(base_input_path, base_output_path)
 
     if result:
         print("\n✅ Success! Check the generated .puml files:")
-        print("- database_diagram.puml (complete with all details)")
-        print("- database_diagram_simple.puml (simplified version)")
+        print(f"- {base_output_path}/database_diagram.puml (complete with all details)")
+        print(f"- {base_output_path}/database_diagram_simple.puml (simplified version)")
         print("\nYou can open these files in:")
         print("- PlantUML online editor: http://www.plantuml.com/plantuml/uml/")
         print("- VS Code with PlantUML extension")
