@@ -41,29 +41,38 @@ def parse_puml_file(file_path):
     return graph, table_columns
 
 
-def extract_subgraph(graph, table1, table2=None):
+def extract_subgraph(graph, tables):
     """
-    Return a subgraph including the path(s) between table1 and table2,
-    or just neighbors of table1 if table2 is None.
+    Return a subgraph including the paths between all given tables,
+    or just the neighborhood if only one table is provided.
     """
-    if table2 and table1 in graph and table2 in graph:
-        try:
-            paths = nx.all_shortest_paths(graph.to_undirected(), table1, table2)
-            nodes = set()
-            edges = set()
-            for path in paths:
-                for i in range(len(path) - 1):
-                    nodes.update([path[i], path[i + 1]])
-                    edges.add((path[i], path[i + 1]))
-            return graph.subgraph(nodes).copy()
-        except nx.NetworkXNoPath:
-            print(f"No path between {table1} and {table2}")
+    if not tables:
+        return None
+
+    if len(tables) == 1:
+        t = tables[0]
+        if t in graph:
+            neighbors = list(graph.successors(t)) + list(graph.predecessors(t))
+            return graph.subgraph([t] + neighbors).copy()
+        else:
+            print(f"Table {t} not found in graph")
             return None
-    elif table1 in graph:
-        neighbors = list(graph.successors(table1)) + list(graph.predecessors(table1))
-        return graph.subgraph([table1] + neighbors).copy()
-    else:
-        print(f"Table {table1} not found in graph")
+
+    # Multiple tables: find all shortest paths between pairs
+    nodes = set()
+    try:
+        for i in range(len(tables)):
+            for j in range(i + 1, len(tables)):
+                t1, t2 = tables[i], tables[j]
+                if t1 in graph and t2 in graph:
+                    paths = nx.all_shortest_paths(graph.to_undirected(), t1, t2)
+                    for path in paths:
+                        nodes.update(path)
+                else:
+                    print(f"Skipping path between {t1} and {t2} (one or both tables not found)")
+        return graph.subgraph(nodes).copy() if nodes else None
+    except nx.NetworkXNoPath:
+        print(f"No path between some of the specified tables")
         return None
 
 
@@ -110,15 +119,14 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Extract subgraph from PlantUML file")
     parser.add_argument("--puml", required=True, help="Path to database_diagram_simple.puml")
-    parser.add_argument("--table1", required=True, help="First table name")
-    parser.add_argument("--table2", help="Second table name (optional)")
+    parser.add_argument("--tables", nargs="+", required=True, help="List of table names to extract relationships between")
     parser.add_argument("--no-columns", action="store_true", help="Exclude columns in output")
 
     args = parser.parse_args()
 
     base_path = "tmp"
     graph, table_columns = parse_puml_file(f"{base_path}/{args.puml}")
-    subgraph = extract_subgraph(graph, args.table1, args.table2)
+    subgraph = extract_subgraph(graph, args.tables)
 
     if subgraph:
         export_subgraph_to_puml(
@@ -126,6 +134,5 @@ if __name__ == "__main__":
             table_columns,
             output_file=f"{base_path}/subgraph.puml",
             include_columns=not args.no_columns,
-            highlight_tables=[args.table1] + ([args.table2] if args.table2 else [])
+            highlight_tables=args.tables
         )
-
