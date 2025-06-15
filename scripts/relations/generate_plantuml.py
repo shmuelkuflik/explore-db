@@ -240,7 +240,7 @@ def generate_simple_version(base_input_path, base_output_path):
 # Main execution
 if __name__ == "__main__":
     print("Generating complete PlantUML database diagram...")
-    base_input_path = "scripts/sql"
+    base_input_path = "scripts/relations/sql"
     base_output_path = "tmp"
     if not os.path.exists(base_output_path):
         os.makedirs(base_output_path)

@@ -1,10 +1,14 @@
 from sqlalchemy import create_engine, text
 import urllib.parse
 
+from sqlalchemy.orm import sessionmaker
+
+
 class MssqlDal:
     def __init__(self):
         self.engine = self._db_connect()
         print(f"Connected to {self.engine}")
+        self.create_session()
 
     def _db_connect(self):
         params = urllib.parse.quote_plus(
@@ -18,6 +22,10 @@ class MssqlDal:
         connection_string = f"mssql+pyodbc:///?odbc_connect={params}"
 
         return create_engine(connection_string)
+
+    def create_session(self):
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
 
     def db_query(self):
         with self.engine.connect() as conn:
