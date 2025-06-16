@@ -12,7 +12,7 @@ class MssqlDal:
 
     def _db_connect(self):
         params = urllib.parse.quote_plus(
-            "DRIVER={ODBC Driver 17 for SQL Server};"
+            "DRIVER=/opt/homebrew/lib/libmsodbcsql.17.dylib;"
             "SERVER=127.0.0.1,1433;"
             "DATABASE=master;"
             "UID=sa;"

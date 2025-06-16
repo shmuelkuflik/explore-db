@@ -1,7 +1,7 @@
 USE master;
 GO
 
-BULK INSERT PrototypeVersionsRegions
+BULK INSERT $(FILE_NAME)
 FROM "/tmp/$(FILE_NAME).csv"
 WITH (
     FIRSTROW = 2,
@@ -11,11 +11,3 @@ WITH (
     DATAFILETYPE = 'char'    -- Interprets the file as char, not native binary
 );
 GO
-
-\copy PrototypeVersionsRegions FROM '/tmp/PrototypeVersionsRegions.csv' WITH (
-    FORMAT csv,
-    HEADER,
-    DELIMITER ',',
-    NULL '',
-    QUOTE '"'
-);

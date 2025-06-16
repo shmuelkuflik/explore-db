@@ -12,15 +12,15 @@ if __name__ == "__main__":
         print(f"{region.Id}: {region.FriendlyName} - {region.RegionName}")
 
     print("---- PrototypeVersionsRegions ----")
-    rows = mssqlDal.session.query(PrototypeVersionsRegions).filter(PrototypeVersionsRegions.RegionId != 0).limit(10).all()
+    rows = mssqlDal.session.query(PrototypeVersionsRegions).filter(PrototypeVersionsRegions.PrototypeVersionId > 2000).limit(10).all()
     for row in rows:
-        print(row.Id, row.RegionId)
+        print(row.Id, row.PrototypeVersionId)
 
     print("---- Join Regions and PrototypeVersionsRegions ----")
     rows = (
         mssqlDal.session.query(Region, PrototypeVersionsRegions)
             .join(PrototypeVersionsRegions, Region.Id == PrototypeVersionsRegions.RegionId)
-            .filter(PrototypeVersionsRegions.RegionId != 0)
+            .filter(PrototypeVersionsRegions.PrototypeVersionId > 2000)
             .order_by(Region.Id)
             .limit(10)
             .all()

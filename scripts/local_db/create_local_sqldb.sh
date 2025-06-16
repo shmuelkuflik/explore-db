@@ -25,6 +25,7 @@ else
   echo "Port 1433 is free. Proceeding to create SQL Server container..."
 fi
 
+cp scripts/local_db/odbcinst.ini /opt/homebrew/etc/
 odbcinst -q -d -n "ODBC Driver 17 for SQL Server"
 
 # Start SQL Server container if it's not already running
@@ -38,7 +39,7 @@ docker run --platform linux/amd64 \
 
 # Wait a few seconds for SQL Server to start up
 echo "Waiting for SQL Server to start..."
-sleep 10
+sleep 15
 
 # Test with sqlcmd (optional, can skip in CI)
 #docker run -it --rm \

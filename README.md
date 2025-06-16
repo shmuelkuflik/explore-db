@@ -41,3 +41,4 @@ python scripts/relations/extract_subgraph.py --puml database_diagram_simple.puml
 ```bash
 ./scripts/local_db/create_tables_pg.sh
 ```
+
