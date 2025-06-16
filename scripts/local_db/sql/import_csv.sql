@@ -11,3 +11,11 @@ WITH (
     DATAFILETYPE = 'char'    -- Interprets the file as char, not native binary
 );
 GO
+
+\copy PrototypeVersionsRegions FROM '/tmp/PrototypeVersionsRegions.csv' WITH (
+    FORMAT csv,
+    HEADER,
+    DELIMITER ',',
+    NULL '',
+    QUOTE '"'
+);
