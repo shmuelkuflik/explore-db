@@ -1,7 +1,7 @@
-from dal_mssql import MssqlDal
-from dal_pg import PostgressDal
-from tables.prototypeVersionsRegions import PrototypeVersionsRegions
-from tables.regions import Region
+from orm.dal_mssql import MssqlDal
+from orm.dal_pg import PostgressDal
+from orm.tables.prototypeVersionsRegions import PrototypeVersionsRegions
+from orm.tables.regions import Region
 
 
 def query_regions(dal):

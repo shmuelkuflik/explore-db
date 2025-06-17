@@ -16,7 +16,7 @@ example
 python scripts/relations/extract_subgraph.py --puml database_diagram_simple.puml --tables Projects Contracts
 ```
 
-# SQL: Create local database & query it with SqlAlchemy
+# SQL: Create local database
 
 ## 1. create local db on your machine
 
@@ -29,7 +29,7 @@ python scripts/relations/extract_subgraph.py --puml database_diagram_simple.puml
 ./scripts/local_db/create_tables_sql.sh
 ```
 
-# Postgress: Create local database & query it with SqlAlchemy
+# Postgress: Create local database
 
 ## 1. create local db on your machine
 
@@ -42,3 +42,8 @@ python scripts/relations/extract_subgraph.py --puml database_diagram_simple.puml
 ./scripts/local_db/create_tables_pg.sh
 ```
 
+# run queries with SQLAlchemy
+
+```bash
+python explore-db/main.py
+``` 
